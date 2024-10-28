@@ -120,14 +120,11 @@ def get_post_data(vk_session, owner_id, post_id):
     post_info = get_post_info(vk_session, owner_id, post_id)
     if post_info:
         post_info["comments"] = get_comments(vk_session, owner_id, post_id)
-        return json.dumps(
-            post_info, ensure_ascii=False
-        )  # Возвращаем в формате JSON с поддержкой кириллицы
-
+        return post_info
     return None
 
 
-def parse_vk(vk_session, domain, start_date, end_date, limit=-1):
+def parse_vk(vk_session, domain, start_date, end_date, path_to_json, limit=-1):
     """
     Парсит данные о постах и их комментариях на определенном диапазоне дат.
 
@@ -145,4 +142,6 @@ def parse_vk(vk_session, domain, start_date, end_date, limit=-1):
     parsed_posts = []
     for _id in tqdm(post_ids):
         parsed_posts.append(get_post_data(vk_session, owner_id, _id))
+    with open(path_to_json, "w") as f:
+        json.dump(parsed_posts, f)
     return parsed_posts
